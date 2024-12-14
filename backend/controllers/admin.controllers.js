@@ -1,16 +1,16 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { v2 as cloudinary } from "cloudinary";
+// import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 dotenv.config();
 
 const mongoUri = process.env.MONGO_URI;
 const dbName = process.env.DB_NAME;
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
 
 export const addProduct = async (req, res) => {
   console.log("text from addProduct controller",req.body);
@@ -47,21 +47,21 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    const folderName = "/image/upload/";
-    const uploadedImageUrls = [];
-    for (let i = 0; i < images.length; i++) {
-      const image = images[i];
+    // const folderName = "/image/upload/";
+    // const uploadedImageUrls = [];
+    // for (let i = 0; i < images.length; i++) {
+    //   const image = images[i];
 
-      const publicId = `${folderName}/${title
-        .replace(/\s+/g, "-")
-        .toLowerCase()}_${i + 1}_700x840`;
+    //   const publicId = `${folderName}/${title
+    //     .replace(/\s+/g, "-")
+    //     .toLowerCase()}_${i + 1}_700x840`;
 
-      const uploadResult = await cloudinary.uploader.upload(image, {
-        folder: folderName,
-        public_id: publicId,
-      });
-      uploadedImageUrls.push(uploadResult.secure_url);
-    }
+    //   const uploadResult = await cloudinary.uploader.upload(image, {
+    //     folder: folderName,
+    //     public_id: publicId,
+    //   });
+    //   uploadedImageUrls.push(uploadResult.secure_url);
+    // }
 
     await client.connect();
 
@@ -81,7 +81,9 @@ export const addProduct = async (req, res) => {
       images: uploadedImageUrls,
     };
 
-    const result = await productsCollection.insertOne(product);
+    // const result = await productsCollection.insertOne(product);
+
+    console.log(product);
 
     res.status(201).json({
       success: true,
