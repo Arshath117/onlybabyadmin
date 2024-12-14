@@ -6,6 +6,7 @@ import AddProduct from "../addProduct/AddProduct";
 const ProductCRUD = () => {
   const { products, error, fetchProducts } = useContext(ProductContext); // Assuming `fetchProducts` refreshes the list
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [editedProduct, setEditedProduct] = useState(null); // Track edited product
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
@@ -28,14 +29,52 @@ const ProductCRUD = () => {
     }
   };
 
+  const handleEdit = (product) => {
+    setEditedProduct(product); // Set the product to be edited
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await axios.put(`http://localhost:5001/api/products/update`, {
+        productId: editedProduct._id,
+        updatedProduct: editedProduct,
+      });
+      fetchProducts(); // Refresh product list
+      setSuccessMessage("Product updated successfully!");
+      setEditedProduct(null); // Reset edit mode
+    } catch (err) {
+      console.error("Error updating product:", err);
+      alert("Failed to update product. Please try again.");
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    const updatedValue = name === "quantity" || name === "discount" ? Number(value) : value;
+
+
+    if (name === "bestSellers") {
+      setEditedProduct({
+        ...editedProduct,
+        [name]: value === "true", // Convert string "true" to boolean true, and "false" to boolean false
+      });
+    } else {
+      setEditedProduct({
+        ...editedProduct,
+        [name]: updatedValue, // For other fields, just update the value
+      });
+    }
+  };
+
   return (
     <div className="w-full mx-auto px-4 py-8">
-      <div className="flex justify-between items-center ">
-        <h2 className=" md:text-3xl font-semibold text-center text-gray-800 mb-6">
+      <div className="flex justify-between items-center">
+        <h2 className="md:text-3xl font-semibold text-center text-gray-800 mb-6">
           PRODUCT OVERSEE
         </h2>
         <div
-          className="text-[10px] md:text-[16px]  border-2 border-blue-100 bg-blue-950 text-white px-3 py-2 rounded-lg "
+          className="text-[10px] md:text-[16px] border-2 border-blue-100 bg-blue-950 text-white px-3 py-2 rounded-lg"
           onClick={() => setShowAddProductModal(true)}
         >
           ADD PRODUCT
@@ -96,18 +135,61 @@ const ProductCRUD = () => {
                       {product.ageGroup}
                     </td>
                     <td className="px-6 py-4 border-b text-red-500">
-                      {product.discount}%
+                      {editedProduct && editedProduct._id === product._id ? (
+                        <input
+                          type="number"
+                          name="discount"
+                          value={editedProduct.discount || ''}
+                          onChange={handleChange}
+                          className="w-16"
+                        />
+                      ) : (
+                        `${product.discount}%`
+                      )}
                     </td>
                     <td className="px-6 py-4 border-b text-center">
-                      {product.bestSeller ? "✔️" : "❌"}
+                      {editedProduct && editedProduct._id === product._id ? (
+                        <select
+                          name="bestSellers"
+                          value={editedProduct.bestSellers}
+                          onChange={handleChange}
+                          className="w-16"
+                        >
+                          <option value={true}>✔️</option>
+                          <option value={false}>❌</option>
+                        </select>
+                      ) : (
+                        `${product.bestSellers ? "✔️" : "❌"}`
+                      )}
                     </td>
                     <td
                       className={`px-6 py-4 border-b text-center ${quantityClass}`}
                     >
-                      {product.quantity}
+                      {editedProduct && editedProduct._id === product._id ? (
+                        <input
+                          type="number"
+                          name="quantity"
+                          value={editedProduct.quantity || ""} // Ensure value is valid
+                          onChange={handleChange}
+                          className="w-16 text-black"
+                        />
+                      ) : (
+                        product.quantity
+                      )}
                     </td>
                     <td className="px-6 py-4 border-b text-blue-500 cursor-pointer hover:text-blue-700">
-                      ✏️ Edit
+                      {editedProduct && editedProduct._id === product._id ? (
+                        <button
+                          onClick={handleSaveEdit}
+                          className="text-green-500"
+                        >
+                          Save
+                        </button>
+                      ) : (
+                        <button onClick={() => handleEdit(product)}>
+                          ✏️ Edit
+                        </button>
+                      )}
                     </td>
                     <td
                       className="px-6 py-4 border-b text-red-500 cursor-pointer hover:text-red-700"
@@ -131,6 +213,7 @@ const ProductCRUD = () => {
           </tbody>
         </table>
       </div>
+
       {showConfirmation && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">

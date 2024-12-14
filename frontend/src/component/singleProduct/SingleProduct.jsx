@@ -46,7 +46,7 @@ const SingleProduct = () => {
       };
 
 
-      const response = await axios.patch(
+      const response = await axios.put(
         "http://localhost:5001/api/products/update",
         {
           productId: id, // Send the product ID

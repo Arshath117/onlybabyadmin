@@ -7,6 +7,6 @@ const router = express.Router();
 router.post("/add", addProduct);
 router.get("/get", getProducts);
 router.delete("/remove", removeProduct);
-router.patch("/update", updateProduct);   
+router.put("/update", updateProduct);   
 
 export default router;

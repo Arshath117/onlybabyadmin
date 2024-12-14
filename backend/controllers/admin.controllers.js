@@ -12,34 +12,125 @@ const dbName = process.env.DB_NAME;
 //   api_secret: process.env.CLOUDINARY_API_SECRET,
 // });
 
+// original
+// export const addProduct = async (req, res) => {
+//   console.log("text from addProduct controller",req.body);
+//   const client = new MongoClient(mongoUri);
+//   try {
+//     const {
+//       title,
+//       price,
+//       age_group,
+//       color,
+//       description,
+//       items_included,
+//       features,
+//       benefits,
+//       quantity,
+//       images,
+//     } = req.body;
+
+//     if (
+//       !title ||
+//       !price ||
+//       !age_group ||
+//       !color ||
+//       !images ||
+//       !description ||
+//       !items_included ||
+//       !features ||
+//       !benefits ||
+//       images.length === 0
+//     ) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Missing required fields or images",
+//       });
+//     }
+
+//     // const folderName = "/image/upload/";
+//     // const uploadedImageUrls = [];
+//     // for (let i = 0; i < images.length; i++) {
+//     //   const image = images[i];
+
+//     //   const publicId = `${folderName}/${title
+//     //     .replace(/\s+/g, "-")
+//     //     .toLowerCase()}_${i + 1}_700x840`;
+
+//     //   const uploadResult = await cloudinary.uploader.upload(image, {
+//     //     folder: folderName,
+//     //     public_id: publicId,
+//     //   });
+//     //   uploadedImageUrls.push(uploadResult.secure_url);
+//     // }
+
+//     await client.connect();
+
+//     const db = client.db(dbName);
+//     const productsCollection = db.collection(process.env.COLLECTION);
+
+//     const product = {
+//       title,
+//       price,
+//       age_group,
+//       color,
+//       description,
+//       items_included,
+//       features,
+//       benefits,
+//       quantity,
+//       images: uploadedImageUrls,
+//     };
+
+//     // const result = await productsCollection.insertOne(product);
+
+//     console.log(product);
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Product added successfully",
+//       productId: result.insertedId,
+//     });
+//   } catch (error) {
+//     console.log("Error in addProduct controller:", error.message);
+//     res.status(500).json({ success: false, message: "Internal Server Error" });
+//   } finally {
+//     await client.close();
+//   }
+// };
+
+//try
 export const addProduct = async (req, res) => {
-  console.log("text from addProduct controller",req.body);
+  console.log("Request data:", req.body);
+
   const client = new MongoClient(mongoUri);
   try {
     const {
-      title,
+      name,
       price,
-      age_group,
+      ageGroup,
       color,
       description,
-      items_included,
+      itemsIncluded,
       features,
       benefits,
       quantity,
-      images,
+      image, // Array of image URLs sent from the frontend
     } = req.body;
 
+    // Validate required fields
     if (
-      !title ||
+      !name ||
       !price ||
-      !age_group ||
+      !ageGroup ||
       !color ||
-      !images ||
       !description ||
-      !items_included ||
+      !itemsIncluded ||
       !features ||
       !benefits ||
-      images.length === 0
+      !quantity ||
+      !image ||
+      image.length === 0
     ) {
       return res.status(400).json({
         success: false,
@@ -47,43 +138,29 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    // const folderName = "/image/upload/";
-    // const uploadedImageUrls = [];
-    // for (let i = 0; i < images.length; i++) {
-    //   const image = images[i];
-
-    //   const publicId = `${folderName}/${title
-    //     .replace(/\s+/g, "-")
-    //     .toLowerCase()}_${i + 1}_700x840`;
-
-    //   const uploadResult = await cloudinary.uploader.upload(image, {
-    //     folder: folderName,
-    //     public_id: publicId,
-    //   });
-    //   uploadedImageUrls.push(uploadResult.secure_url);
-    // }
-
+    // Connect to MongoDB
     await client.connect();
-
     const db = client.db(dbName);
     const productsCollection = db.collection(process.env.COLLECTION);
 
+    // Create the product object
     const product = {
-      title,
+      name,
       price,
-      age_group,
+      ageGroup,
       color,
       description,
-      items_included,
+      itemsIncluded,
       features,
       benefits,
       quantity,
-      images: uploadedImageUrls,
+      image, // Store the array of image URLs directly
     };
 
-    // const result = await productsCollection.insertOne(product);
+    // Insert the product into the database
+    const result = await productsCollection.insertOne(product);
 
-    console.log(product);
+    console.log("Product added:", product);
 
     res.status(201).json({
       success: true,
@@ -91,7 +168,7 @@ export const addProduct = async (req, res) => {
       productId: result.insertedId,
     });
   } catch (error) {
-    console.log("Error in addProduct controller:", error.message);
+    console.error("Error in addProduct controller:", error.message);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   } finally {
     await client.close();
@@ -177,3 +254,4 @@ export const updateProduct = async (req, res) => {
     await client.close();
   }
 };
+

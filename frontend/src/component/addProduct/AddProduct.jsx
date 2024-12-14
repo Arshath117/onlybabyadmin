@@ -2,19 +2,33 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Image } from "cloudinary-react"; // Import Image from cloudinary-react
 
+import { Cloudinary } from "@cloudinary/url-gen";
+import { AdvancedImage, responsive, placeholder } from "@cloudinary/react";
+
 const AddProduct = ({ onClose, onProductAdded }) => {
   const [formDataState, setFormDataState] = useState({
-    productName: "",
-    price: "",
+    name: "",
+    price: null,
     ageGroup: "",
     color: "",
     description: "",
     itemsIncluded: "",
     features: "",
     benefits: "",
-    quantity: "",
-    selectedImages: [], // Array for selected images
-    uploadedImageUrls: [], // Array for uploaded image URLs
+    quantity: null,
+    image: [
+      "https://th.bing.com/th/id/OIP.IcZ8nRGB7G5mFavfwzWcsQAAAA?rs=1&pid=ImgDetMain",
+      "https://th.bing.com/th/id/OIP.NA6IJp_iNpwUov3gt_YOKQAAAA?rs=1&pid=ImgDetMain",
+      "https://rukminim1.flixcart.com/image/832/832/xif0q/vehicle-pull-along/g/b/n/bump-and-go-musical-engine-toy-train-with-lights-and-music-cute-original-imaggrgzwqstzapb.jpeg?q=70",
+    ], // Array for selected images
+    // uploadedImageUrls: [], // Array for uploaded image URLs
+  });
+
+  // Cloudinary configuration
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: import.meta.env.CLOUDINARY_CLOUD_NAME,
+    },
   });
 
   // Handle form field changes
@@ -37,43 +51,52 @@ const AddProduct = ({ onClose, onProductAdded }) => {
   // Handle form submission
   const handleSubmit = async () => {
     const folderName = "/image/upload/";
-    const uploadedImageUrls = [];
-    for (let i = 0; i < formDataState.selectedImages.length; i++) {
-      const image = formDataState.selectedImages[i];
+    
+    // const uploadedImageUrls = [];
+    // for (let i = 0; i < formDataState.image.length; i++) {
+    //   const image = formDataState.image[i];
 
-      const publicId = `${folderName}/${formDataState.productName
-        .replace(/\s+/g, "-")
-        .toLowerCase()}_${i + 1}_700x840`;
+    //   const publicId = `${folderName}/${formDataState.name.replace(/\s+/g, "-").toLowerCase()}_${i + 1}_700x840`;
 
-      const uploadResult = await cloudinary.uploader.upload(image, {
-        folder: folderName,
-        public_id: publicId,
-      });
-      uploadedImageUrls.push(uploadResult.secure_url);
-    }
+    //   const uploadResult = await cloudinary.uploader.upload(image, {
+    //     folder: folderName,
+    //     public_id: publicId,
+    //   });
+    //   uploadedImageUrls.push(uploadResult.secure_url);
+    // }
 
     // Update the uploaded image URLs state
-    setFormDataState((prevState) => ({
-      ...prevState,
-      uploadedImageUrls, // Store the uploaded image URLs
-    }));
+    // setFormDataState((prevState) => ({
+    //   ...prevState,
+    //   uploadedImageUrls, // Store the uploaded image URLs
+    // }));
 
-    const formData = new FormData();
-    for (const [key, value] of Object.entries(formDataState)) {
-      if (key !== "selectedImages") {
-        formData.append(key, value);
-      }
-    }
+    // const formData = new FormData();
+    // for (const [key, value] of Object.entries(formDataState)) {
+      // if (key !== "selectedImages") {
+      //   formData.append(key, value);
+      // }
+    // }
+    // formData.append(key, value);
 
-    formData.append("images", formDataState.selectedImages);
+    // console.log("FormData:", formDataState);
+
+    // let object = {};
+    // formData.forEach(function (value, key) {
+    //   object[key] = value;
+    // });
+    // let json = JSON.stringify(object);
+
+    // formData.append("images", formDataState.selectedImages);
 
     try {
       const response = await axios.post(
         "http://localhost:5001/api/products/add",
-        formData, // Use FormData instead of JSON
+        formDataState, // Use FormData instead of JSON
         {
           headers: {
-            "Content-Type": "multipart/form-data", // Specify the correct content type for form data
+            "Accept": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -99,8 +122,8 @@ const AddProduct = ({ onClose, onProductAdded }) => {
               </label>
               <input
                 type="text"
-                name="productName"
-                value={formDataState.productName}
+                name="name"
+                value={formDataState.name}
                 onChange={handleInputChange}
                 className="w-full px-4 py-2 border rounded-lg"
               />
@@ -214,7 +237,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
               </label>
               <input
                 type="file"
-                name="selectedImages"
+                name="image"
                 accept="image/*"
                 multiple
                 onChange={handleFileChange}
@@ -225,7 +248,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
           {/* Display uploaded images using Image component */}
           <div className="mt-4">
             <h4 className="text-sm font-medium mb-2">Uploaded Images</h4>
-            <div className="grid grid-cols-3 gap-4">
+            {/* <div className="grid grid-cols-3 gap-4">
               {formDataState.uploadedImageUrls.map((url, index) => (
                 <Image
                   key={index}
@@ -236,7 +259,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
                   crop="scale"
                 />
               ))}
-            </div>
+            </div> */}
           </div>
 
           <div className="flex justify-end space-x-4">
