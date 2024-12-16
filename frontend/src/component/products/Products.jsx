@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import Cards from "../cards/Cards";
+import ProductCard from "../cards/ProductCard";
 import { ProductContext } from "../context";
 
 const Products = () => {
@@ -14,7 +14,7 @@ const Products = () => {
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-10 mb-20">
         {products.map((product) => (
-          <Cards key={product._id} product={product} />
+          <ProductCard key={product._id} product={product} />
         ))}
       </div>
     </div>

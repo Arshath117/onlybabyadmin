@@ -1,100 +1,121 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { ProductContext } from "../context";
 import axios from "axios";
-import AddProduct from "../addProduct/AddProduct";
+import AddProduct from "../addProduct/index";
+import "../styles/animations.css";
+import { PlusCircle, Edit2, Trash2, Check, X } from "lucide-react";
 
 const ProductCRUD = () => {
-  const { products, error, fetchProducts } = useContext(ProductContext); // Assuming `fetchProducts` refreshes the list
+  const { products, error, fetchProducts } = useContext(ProductContext);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [editedProduct, setEditedProduct] = useState(null); // Track edited product
+  const [editedProduct, setEditedProduct] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [successMessage, setSuccessMessage] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleProductAdded = () => {
-    fetchProducts(); // Refresh the product list after adding a new product
+    setIsLoading(true);
+    fetchProducts().finally(() => setIsLoading(false));
   };
 
   const handleDelete = async () => {
     try {
+      setIsLoading(true);
       await axios.delete(`http://localhost:5001/api/products/remove`, {
         params: { productId: selectedProduct._id },
       });
-      fetchProducts(); // Refresh the product list
-      setShowConfirmation(false); // Close the popup
-      setSuccessMessage("Item deleted successfully!"); // Show success message
+      await fetchProducts();
+      setShowConfirmation(false);
+      setSuccessMessage("Item deleted successfully!");
+      setTimeout(() => setSuccessMessage(false), 3000);
     } catch (err) {
       console.error("Error deleting product:", err);
       alert("Failed to delete product. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleEdit = (product) => {
-    setEditedProduct(product); // Set the product to be edited
+    setEditedProduct(product);
   };
 
   const handleSaveEdit = async () => {
     try {
+      setIsLoading(true);
       await axios.put(`http://localhost:5001/api/products/update`, {
         productId: editedProduct._id,
         updatedProduct: editedProduct,
       });
-      fetchProducts(); // Refresh product list
+      await fetchProducts();
       setSuccessMessage("Product updated successfully!");
-      setEditedProduct(null); // Reset edit mode
+      setTimeout(() => setSuccessMessage(false), 3000);
+      setEditedProduct(null);
     } catch (err) {
       console.error("Error updating product:", err);
       alert("Failed to update product. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     const updatedValue = name === "quantity" || name === "discount" ? Number(value) : value;
 
-
-    if (name === "bestSellers") {
-      setEditedProduct({
-        ...editedProduct,
-        [name]: value === "true", // Convert string "true" to boolean true, and "false" to boolean false
-      });
-    } else {
-      setEditedProduct({
-        ...editedProduct,
-        [name]: updatedValue, // For other fields, just update the value
-      });
-    }
+    setEditedProduct({
+      ...editedProduct,
+      [name]: name === "bestSellers" ? value === "true" : updatedValue,
+    });
   };
 
   return (
-    <div className="w-full mx-auto px-4 py-8">
-      <div className="flex justify-between items-center">
-        <h2 className="md:text-3xl font-semibold text-center text-gray-800 mb-6">
+    <div className="w-full mx-auto px-4 py-8 animate-fade-in">
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="md:text-3xl font-semibold text-gray-800 animate-slide-in">
           PRODUCT OVERSEE
         </h2>
-        <div
-          className="text-[10px] md:text-[16px] border-2 border-blue-100 bg-blue-950 text-white px-3 py-2 rounded-lg"
+        <button
+          className="flex items-center gap-2 bg-blue-950 text-white px-4 py-2 rounded-lg button-hover ripple-effect"
           onClick={() => setShowAddProductModal(true)}
         >
-          ADD PRODUCT
-        </div>
+          <PlusCircle size={20} />
+          <span className="text-sm md:text-base">ADD PRODUCT</span>
+        </button>
       </div>
 
       {showAddProductModal && (
-        <AddProduct
-          onClose={() => setShowAddProductModal(false)}
-          onProductAdded={handleProductAdded}
-        />
+        <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="modal-content bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4">
+            <AddProduct
+              onClose={() => setShowAddProductModal(false)}
+              onProductAdded={handleProductAdded}
+            />
+          </div>
+        </div>
       )}
 
-      {error && <p className="text-red-500 text-center mb-4">Error: {error}</p>}
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 animate-fade-in">
+          {error}
+        </div>
+      )}
 
-      <div>
-        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
-      </div>
+      {successMessage && (
+        <div className="success-message fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg">
+          {successMessage}
+        </div>
+      )}
 
-      <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
+      <div className="overflow-x-auto bg-white shadow-lg rounded-lg hover-scale">
         <table className="min-w-full table-auto border-collapse">
           <thead className="bg-gradient-to-r from-blue-500 to-blue-700 text-white">
             <tr>
@@ -105,107 +126,113 @@ const ProductCRUD = () => {
               <th className="px-6 py-3 border-b text-left">Discount</th>
               <th className="px-6 py-3 border-b text-left">Best Seller</th>
               <th className="px-6 py-3 border-b text-left">Quantity</th>
-              <th className="px-6 py-3 border-b text-left">Edit</th>
-              <th className="px-6 py-3 border-b text-left">Delete</th>
+              <th className="px-6 py-3 border-b text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {products.length > 0 ? (
-              products.map((product, index) => {
-                const quantityClass =
-                  product.quantity < 5
-                    ? "bg-red-800 text-white"
-                    : product.quantity < 15
-                    ? "bg-blue-400 text-white"
-                    : "bg-green-500 text-white";
-
-                return (
-                  <tr
-                    key={product._id}
-                    className="hover:bg-gray-100 transition duration-200 ease-in-out"
-                  >
-                    <td className="px-6 py-4 border-b">{index + 1}</td>
-                    <td className="px-6 py-4 border-b font-semibold">
-                      {product.name}
-                    </td>
-                    <td className="px-6 py-4 border-b text-green-500">
-                      ₹{product.price}
-                    </td>
-                    <td className="px-6 py-4 border-b text-center">
-                      {product.ageGroup}
-                    </td>
-                    <td className="px-6 py-4 border-b text-red-500">
-                      {editedProduct && editedProduct._id === product._id ? (
-                        <input
-                          type="number"
-                          name="discount"
-                          value={editedProduct.discount || ''}
-                          onChange={handleChange}
-                          className="w-16"
-                        />
-                      ) : (
-                        `${product.discount}%`
-                      )}
-                    </td>
-                    <td className="px-6 py-4 border-b text-center">
-                      {editedProduct && editedProduct._id === product._id ? (
-                        <select
-                          name="bestSellers"
-                          value={editedProduct.bestSellers}
-                          onChange={handleChange}
-                          className="w-16"
-                        >
-                          <option value={true}>✔️</option>
-                          <option value={false}>❌</option>
-                        </select>
-                      ) : (
-                        `${product.bestSellers ? "✔️" : "❌"}`
-                      )}
-                    </td>
-                    <td
-                      className={`px-6 py-4 border-b text-center ${quantityClass}`}
-                    >
-                      {editedProduct && editedProduct._id === product._id ? (
-                        <input
-                          type="number"
-                          name="quantity"
-                          value={editedProduct.quantity || ""} // Ensure value is valid
-                          onChange={handleChange}
-                          className="w-16 text-black"
-                        />
-                      ) : (
-                        product.quantity
-                      )}
-                    </td>
-                    <td className="px-6 py-4 border-b text-blue-500 cursor-pointer hover:text-blue-700">
+            {isLoading ? (
+              Array(5).fill(0).map((_, index) => (
+                <tr key={index} className="shimmer">
+                  <td colSpan="8" className="h-16"></td>
+                </tr>
+              ))
+            ) : products.length > 0 ? (
+              products.map((product, index) => (
+                <tr
+                  key={product._id}
+                  className="table-row-animate hover:bg-gray-50 transition-all duration-200"
+                >
+                  <td className="px-6 py-4 border-b">{index + 1}</td>
+                  <td className="px-6 py-4 border-b font-semibold">{product.name}</td>
+                  <td className="px-6 py-4 border-b text-green-500">₹{product.price}</td>
+                  <td className="px-6 py-4 border-b text-center">{product.ageGroup}</td>
+                  <td className="px-6 py-4 border-b text-red-500">
+                    {editedProduct && editedProduct._id === product._id ? (
+                      <input
+                        type="number"
+                        name="discount"
+                        value={editedProduct.discount || ""}
+                        onChange={handleChange}
+                        className="w-20 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    ) : (
+                      `${product.discount}%`
+                    )}
+                  </td>
+                  <td className="px-6 py-4 border-b text-center">
+                    {editedProduct && editedProduct._id === product._id ? (
+                      <select
+                        name="bestSellers"
+                        value={editedProduct.bestSellers}
+                        onChange={handleChange}
+                        className="w-20 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value={true}>Yes</option>
+                        <option value={false}>No</option>
+                      </select>
+                    ) : (
+                      <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
+                        product.bestSellers ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                      }`}>
+                        {product.bestSellers ? <Check size={14} /> : <X size={14} />}
+                      </span>
+                    )}
+                  </td>
+                  <td className={`px-6 py-4 border-b text-center ${
+                    product.quantity < 5
+                      ? 'bg-red-100 text-red-800'
+                      : product.quantity < 15
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-green-100 text-green-800'
+                  } font-medium`}>
+                    {editedProduct && editedProduct._id === product._id ? (
+                      <input
+                        type="number"
+                        name="quantity"
+                        value={editedProduct.quantity || ""}
+                        onChange={handleChange}
+                        className="w-20 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    ) : (
+                      product.quantity
+                    )}
+                  </td>
+                  <td className="px-6 py-4 border-b">
+                    <div className="flex gap-3">
                       {editedProduct && editedProduct._id === product._id ? (
                         <button
                           onClick={handleSaveEdit}
-                          className="text-green-500"
+                          className="text-green-600 hover:text-green-800 button-hover"
+                          title="Save"
                         >
-                          Save
+                          <Check size={20} />
                         </button>
                       ) : (
-                        <button onClick={() => handleEdit(product)}>
-                          ✏️ Edit
+                        <button
+                          onClick={() => handleEdit(product)}
+                          className="text-blue-600 hover:text-blue-800 button-hover"
+                          title="Edit"
+                        >
+                          <Edit2 size={20} />
                         </button>
                       )}
-                    </td>
-                    <td
-                      className="px-6 py-4 border-b text-red-500 cursor-pointer hover:text-red-700"
-                      onClick={() => {
-                        setSelectedProduct(product);
-                        setShowConfirmation(true);
-                      }}
-                    >
-                      🗑️ Delete
-                    </td>
-                  </tr>
-                );
-              })
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setShowConfirmation(true);
+                        }}
+                        className="text-red-600 hover:text-red-800 button-hover"
+                        title="Delete"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
             ) : (
               <tr>
-                <td colSpan="10" className="text-center px-4 py-2">
+                <td colSpan="8" className="text-center px-4 py-8 text-gray-500">
                   No products available
                 </td>
               </tr>
@@ -215,24 +242,25 @@ const ProductCRUD = () => {
       </div>
 
       {showConfirmation && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">Confirm Delete</h3>
-            <p className="mb-6">
+        <div className="modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="modal-content bg-white p-6 rounded-lg shadow-xl max-w-md mx-4 w-full">
+            <h3 className="text-xl font-semibold mb-4">Confirm Delete</h3>
+            <p className="mb-6 text-gray-600">
               Are you sure you want to delete this product?
-              <br />
-              {<div className="font-bold text-2xl">{selectedProduct.name}</div>}
+              <span className="block font-bold text-xl mt-2 text-gray-800">
+                {selectedProduct.name}
+              </span>
             </p>
-            <div className="flex justify-end space-x-4">
+            <div className="flex justify-end gap-4">
               <button
                 onClick={() => setShowConfirmation(false)}
-                className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 button-hover"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 button-hover"
               >
                 Delete
               </button>
