@@ -27,7 +27,7 @@ const Nav = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    sessionStorage.removeItem("authToken");
     navigate("/login");
   };
 
@@ -35,7 +35,7 @@ const Nav = () => {
     <div className="sticky top-0 w-full md:px-10 px-3 py-5 flex justify-between items-center bg-blue-950 text-white z-50 shadow-lg">
       <animated.div style={logoSpring} className="font-logo text-xl md:text-2xl lg:text-4xl font-bold flex items-center gap-2">
         <ShoppingBag className="w-8 h-8" />
-        <span>Only4Baby</span>
+        <span>OnlyBaby</span>
       </animated.div>
 
       <animated.div 

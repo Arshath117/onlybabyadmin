@@ -11,6 +11,7 @@ const ProductCRUD = React.lazy(() => import('./component/productCRUD/ProductCRUD
 const Order = React.lazy(() => import('./component/orders/Order'));
 const Products = React.lazy(() => import('./component/products/Products'));
 const SingleProduct = React.lazy(() => import('./component/singleProduct'));
+const OtpPage = React.lazy(() => import('./component/authorization/OTPVerification')); // Lazy load OTP page
 
 // Enhanced loading component with animation
 const LoadingFallback = () => {
@@ -43,10 +44,13 @@ const App = () => {
         <Layout>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
-              {/* Public Route */}
+              {/* Public Route for Login */}
               <Route path="/login" element={<Login />} />
 
-              {/* Protected Routes */}
+              {/* OTP Page (After login, before accessing protected routes) */}
+              <Route path="/otp" element={<OtpPage />} /> 
+
+              {/* Protected Routes (Only accessible after OTP verification) */}
               <Route
                 path="/"
                 element={
@@ -80,7 +84,7 @@ const App = () => {
                 }
               />
 
-              {/* Catch-all redirect */}
+              {/* Catch-all redirect to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

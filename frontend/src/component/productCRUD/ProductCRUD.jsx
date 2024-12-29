@@ -13,6 +13,16 @@ const ProductCRUD = () => {
   const [successMessage, setSuccessMessage] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filter products based on the search query
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -69,7 +79,8 @@ const ProductCRUD = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedValue = name === "quantity" || name === "discount" ? Number(value) : value;
+    const updatedValue =
+      name === "quantity" || name === "discount" ? Number(value) : value;
 
     setEditedProduct({
       ...editedProduct,
@@ -90,6 +101,15 @@ const ProductCRUD = () => {
           <PlusCircle size={20} />
           <span className="text-sm md:text-base">ADD PRODUCT</span>
         </button>
+      </div>
+      <div className="flex justify-end items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search by product name"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
 
       {showAddProductModal && (
@@ -131,34 +151,47 @@ const ProductCRUD = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              Array(5).fill(0).map((_, index) => (
-                <tr key={index} className="shimmer">
-                  <td colSpan="8" className="h-16"></td>
-                </tr>
-              ))
-            ) : products.length > 0 ? (
-              products.map((product, index) => (
+              Array(5)
+                .fill(0)
+                .map((_, index) => (
+                  <tr key={index} className="shimmer">
+                    <td colSpan="8" className="h-16"></td>
+                  </tr>
+                ))
+            ) : filteredProducts.length > 0 ? (
+              filteredProducts.map((product, index) => (
                 <tr
                   key={product._id}
                   className="table-row-animate hover:bg-gray-50 transition-all duration-200"
                 >
                   <td className="px-6 py-4 border-b">{index + 1}</td>
-                  <td className="px-6 py-4 border-b font-semibold">{product.name}</td>
-                  <td className="px-6 py-4 border-b text-green-500">₹{product.price}</td>
-                  <td className="px-6 py-4 border-b text-center">{product.ageGroup}</td>
+                  <td className="px-6 py-4 border-b font-semibold">
+                    {product.name}
+                  </td>
+                  <td className="px-6 py-4 border-b text-green-500">
+                    ₹{product.price}
+                  </td>
+                  <td className="px-6 py-4 border-b text-center">
+                    {product.ageGroup}
+                  </td>
                   <td className="px-6 py-4 border-b text-red-500">
                     {editedProduct && editedProduct._id === product._id ? (
                       <input
                         type="number"
                         name="discount"
-                        value={editedProduct.discount || ""}
+                        value={
+                          editedProduct.discount !== undefined
+                            ? editedProduct.discount
+                            : ""
+                        }
                         onChange={handleChange}
                         className="w-20 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     ) : (
-                      `${product.discount}%`
+                      `${product.discount || 0}%`
                     )}
                   </td>
+
                   <td className="px-6 py-4 border-b text-center">
                     {editedProduct && editedProduct._id === product._id ? (
                       <select
@@ -171,20 +204,30 @@ const ProductCRUD = () => {
                         <option value={false}>No</option>
                       </select>
                     ) : (
-                      <span className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
-                        product.bestSellers ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                      }`}>
-                        {product.bestSellers ? <Check size={14} /> : <X size={14} />}
+                      <span
+                        className={`inline-flex items-center justify-center w-6 h-6 rounded-full ${
+                          product.bestSellers
+                            ? "bg-green-100 text-green-600"
+                            : "bg-red-100 text-red-600"
+                        }`}
+                      >
+                        {product.bestSellers ? (
+                          <Check size={14} />
+                        ) : (
+                          <X size={14} />
+                        )}
                       </span>
                     )}
                   </td>
-                  <td className={`px-6 py-4 border-b text-center ${
-                    product.quantity < 5
-                      ? 'bg-red-100 text-red-800'
-                      : product.quantity < 15
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-green-100 text-green-800'
-                  } font-medium`}>
+                  <td
+                    className={`px-6 py-4 border-b text-center ${
+                      product.quantity < 5
+                        ? "bg-red-100 text-red-800"
+                        : product.quantity < 15
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-green-100 text-green-800"
+                    } font-medium`}
+                  >
                     {editedProduct && editedProduct._id === product._id ? (
                       <input
                         type="number"

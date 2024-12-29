@@ -4,17 +4,17 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const token = sessionStorage.getItem('authToken');
     setIsAuthenticated(!!token);
   }, []);
 
   const login = (token) => {
-    localStorage.setItem('authToken', token);
+    sessionStorage.setItem('authToken', token);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
+    sessionStorage.removeItem('authToken');
     setIsAuthenticated(false);
   };
 
