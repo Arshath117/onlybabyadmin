@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ProductProvider } from "./component/context";
-import Layout from './component/layout/Layout';
+import Layout from './component/layout/layout';
 import ProtectedRoute from './component/auth/ProtectedRoute';
 import { useSpring, animated } from '@react-spring/web';
 
