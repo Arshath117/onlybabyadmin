@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ const Login = () => {
     setLoading(true); // Set loading to true
 
     try {
-      const response = await fetch("https://onlybaby-admin.onrender.com/api/auth/login", {
+      const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,11 +32,11 @@ const Login = () => {
         login(data.token); 
         navigate("/otp");
       } else {
-        alert("Invalid credentials");
+        toast.error("Invalid credentials");
       }
     } catch (error) {
       console.error("Error during login:", error);
-      alert("An error occurred during login");
+      toast.error("An error occurred during login");
     } finally {
       setLoading(false); // Set loading back to false
     }

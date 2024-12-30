@@ -55,7 +55,7 @@ const SingleProduct = () => {
       };
 
       const response = await axios.put(
-        "https://onlybaby-admin.onrender.com/api/products/update",
+        "http://localhost:5001/api/products/update",
         {
           productId: id,
           updatedProduct,

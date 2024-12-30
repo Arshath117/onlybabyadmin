@@ -4,6 +4,7 @@ import { useSpring, animated, config } from '@react-spring/web';
 import FormField from './FormField';
 import ImagePreview from './ImagePreview';
 import axios from 'axios';
+import toast from "react-hot-toast";
 
 const AddProduct = ({ onClose, onProductAdded }) => {
   const [formData, setFormData] = useState({
@@ -72,7 +73,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        "https://onlybaby-admin.onrender.com/api/products/add",
+        "http://localhost:5001/api/products/add",
         formData,
         {
           headers: {
@@ -83,10 +84,10 @@ const AddProduct = ({ onClose, onProductAdded }) => {
       );
       onProductAdded();
       onClose();
-      alert("Product added successfully!");
+      toast.success("Product added successfully!");
     } catch (error) {
       console.error("Error uploading product:", error);
-      alert("Error uploading product.");
+      toast.error("Error uploading product.");
     }
   };
 

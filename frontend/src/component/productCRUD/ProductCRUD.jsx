@@ -4,6 +4,7 @@ import axios from "axios";
 import AddProduct from "../addProduct/index";
 import "../styles/animations.css";
 import { PlusCircle, Edit2, Trash2, Check, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 const ProductCRUD = () => {
   const { products, error, fetchProducts } = useContext(ProductContext);
@@ -39,7 +40,7 @@ const ProductCRUD = () => {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`https://onlybaby-admin.onrender.com/api/products/remove`, {
+      await axios.delete(`http://localhost:5001/api/products/remove`, {
         params: { productId: selectedProduct._id },
       });
       await fetchProducts();
@@ -48,7 +49,7 @@ const ProductCRUD = () => {
       setTimeout(() => setSuccessMessage(false), 3000);
     } catch (err) {
       console.error("Error deleting product:", err);
-      alert("Failed to delete product. Please try again.");
+      toast.error("Failed to delete product. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +62,7 @@ const ProductCRUD = () => {
   const handleSaveEdit = async () => {
     try {
       setIsLoading(true);
-      await axios.put(`https://onlybaby-admin.onrender.com/api/products/update`, {
+      await axios.put(`http://localhost:5001/api/products/update`, {
         productId: editedProduct._id,
         updatedProduct: editedProduct,
       });
@@ -71,7 +72,7 @@ const ProductCRUD = () => {
       setEditedProduct(null);
     } catch (err) {
       console.error("Error updating product:", err);
-      alert("Failed to update product. Please try again.");
+      toast.error("Failed to update product. Please try again.");
     } finally {
       setIsLoading(false);
     }

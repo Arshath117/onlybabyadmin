@@ -4,6 +4,7 @@ import { ProductProvider } from "./component/context";
 import Layout from './component/layout/layout';
 import ProtectedRoute from './component/auth/ProtectedRoute';
 import { useSpring, animated } from '@react-spring/web';
+import { Toaster } from 'react-hot-toast';
 
 // Lazy load components with better loading states
 const Login = React.lazy(() => import('./component/authorization/login'));
@@ -40,6 +41,7 @@ const LoadingFallback = () => {
 const App = () => {
   return (
     <ProductProvider>
+      
       <Router>
         <Layout>
           <Suspense fallback={<LoadingFallback />}>
@@ -90,6 +92,7 @@ const App = () => {
           </Suspense>
         </Layout>
       </Router>
+      <Toaster />
     </ProductProvider>
   );
 };

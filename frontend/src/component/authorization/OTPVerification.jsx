@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail } from "lucide-react";
+import toast from "react-hot-toast";
 
 
 function OTPVerification() {
@@ -45,7 +46,7 @@ function OTPVerification() {
     setLoading(true);
     e.preventDefault();
     try {
-      const response = await fetch("https://onlybaby-admin.onrender.com/api/auth/verify-otp", {
+      const response = await fetch("http://localhost:5001/api/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,15 +59,15 @@ function OTPVerification() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("OTP verified successfully!");
+        toast.success("OTP verified successfully!");
         setLoading(false);
         navigate("/");
       } else {
-        alert(data.message || "Invalid OTP");
+        toast.error(data.message || "Invalid OTP");
       }
     } catch (error) {
       console.error("Error during OTP verification:", error);
-      alert("An error occurred during OTP verification");
+      toast.error("An error occurred during OTP verification");
     }
     setLoading(false);
   };
@@ -74,7 +75,7 @@ function OTPVerification() {
   const handleResendOtp = async () => {
     setLoading(true);
     try {
-      const response = await fetch("https://onlybaby-admin.onrender.com/api/auth/resend-otp", {
+      const response = await fetch("http://localhost:5001/api/auth/resend-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,14 +85,14 @@ function OTPVerification() {
 
       const data = await response.json();
       if (response.ok) {
-        alert("A new OTP has been sent to your email.");
+        toast.success("A new OTP has been sent to your email.");
         setResendTimer(30); // Reset the resend timer
       } else {
-        alert(data.message || "Failed to resend OTP.");
+        toast.error(data.message || "Failed to resend OTP.");
       }
     } catch (error) {
       console.error("Error during resending OTP:", error);
-      alert("An error occurred while resending OTP.");
+      toast.error("An error occurred while resending OTP.");
     }finally{
       setLoading(false);
     }
