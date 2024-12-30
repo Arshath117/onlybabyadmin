@@ -91,7 +91,7 @@
 
 //     try {
 //       const response = await axios.post(
-//         "http://localhost:5001/api/products/add",
+//         "https://onlybaby-admin.onrender.com/api/products/add",
 //         formDataState, // Use FormData instead of JSON
 //         {
 //           headers: {

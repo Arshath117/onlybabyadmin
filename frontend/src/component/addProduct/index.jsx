@@ -72,7 +72,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5001/api/products/add",
+        "https://onlybaby-admin.onrender.com/api/products/add",
         formData,
         {
           headers: {
