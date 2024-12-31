@@ -15,7 +15,7 @@ const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cors({
-    origin:"http://localhost:5174",
+    origin:"https://onlybaby-admin.onrender.com",
     credentials:true
 }));
 

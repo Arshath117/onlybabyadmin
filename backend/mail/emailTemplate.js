@@ -14,13 +14,13 @@ export const emailTemplate = {
       <body>
         <div class="container">
           <div class="header">
-            <img src="cid:logo" alt="Toy Store Logo" class="logo" />
-            <h1>🧸 Toy Store - Email Verification</h1>
+            <img src="cid:logo" alt="Only Baby Logo" class="logo" />
+            <h1>🧸 Only Baby - Email Verification</h1>
           </div>
           <div class="content">
             <h2>Hello {{name}}!</h2>
             <div class="highlight">
-              <p>Welcome to Toy Store! Please use the following OTP to verify your email address:</p>
+              <p>Welcome to Only Baby! Please use the following OTP to verify your email address:</p>
             </div>
             <div class="otp">{{otp}}</div>
             <p>This OTP will expire in 10 minutes.</p>
@@ -31,7 +31,7 @@ export const emailTemplate = {
             <div class="social-links">
               <a href="#">Facebook</a> • <a href="#">Twitter</a> • <a href="#">Instagram</a>
             </div>
-            <p>© 2023 Toy Store. All rights reserved.</p>
+            <p>© 2023 Only Baby. All rights reserved.</p>
           </div>
         </div>
       </body>
