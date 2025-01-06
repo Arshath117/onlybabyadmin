@@ -1,103 +1,11 @@
 import { MongoClient, ObjectId } from "mongodb";
-// import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 dotenv.config();
 
 const mongoUri = process.env.MONGO_URI;
 const dbName = process.env.DB_NAME;
 
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
 
-// original
-// export const addProduct = async (req, res) => {
-//   console.log("text from addProduct controller",req.body);
-//   const client = new MongoClient(mongoUri);
-//   try {
-//     const {
-//       title,
-//       price,
-//       age_group,
-//       color,
-//       description,
-//       items_included,
-//       features,
-//       benefits,
-//       quantity,
-//       images,
-//     } = req.body;
-
-//     if (
-//       !title ||
-//       !price ||
-//       !age_group ||
-//       !color ||
-//       !images ||
-//       !description ||
-//       !items_included ||
-//       !features ||
-//       !benefits ||
-//       images.length === 0
-//     ) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Missing required fields or images",
-//       });
-//     }
-
-//     // const folderName = "/image/upload/";
-//     // const uploadedImageUrls = [];
-//     // for (let i = 0; i < images.length; i++) {
-//     //   const image = images[i];
-
-//     //   const publicId = `${folderName}/${title
-//     //     .replace(/\s+/g, "-")
-//     //     .toLowerCase()}_${i + 1}_700x840`;
-
-//     //   const uploadResult = await cloudinary.uploader.upload(image, {
-//     //     folder: folderName,
-//     //     public_id: publicId,
-//     //   });
-//     //   uploadedImageUrls.push(uploadResult.secure_url);
-//     // }
-
-//     await client.connect();
-
-//     const db = client.db(dbName);
-//     const productsCollection = db.collection(process.env.COLLECTION);
-
-//     const product = {
-//       title,
-//       price,
-//       age_group,
-//       color,
-//       description,
-//       items_included,
-//       features,
-//       benefits,
-//       quantity,
-//       images: uploadedImageUrls,
-//     };
-
-//     // const result = await productsCollection.insertOne(product);
-
-//     console.log(product);
-
-//     res.status(201).json({
-//       success: true,
-//       message: "Product added successfully",
-//       productId: result.insertedId,
-//     });
-//   } catch (error) {
-//     console.log("Error in addProduct controller:", error.message);
-//     res.status(500).json({ success: false, message: "Internal Server Error" });
-//   } finally {
-//     await client.close();
-//   }
-// };
 
 //try
 export const addProduct = async (req, res) => {

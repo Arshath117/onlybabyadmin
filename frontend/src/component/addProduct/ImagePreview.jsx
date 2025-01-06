@@ -14,7 +14,7 @@ const ImagePreview = ({ images, onRemove, imageSpring }) => {
           />
           <button
             onClick={() => onRemove(index)}
-            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-100 "
           >
             <X size={16} />
           </button>

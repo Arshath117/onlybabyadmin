@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { X } from 'lucide-react';
-import { useSpring, animated, config } from '@react-spring/web';
-import FormField from './FormField';
-import ImagePreview from './ImagePreview';
-import axios from 'axios';
+import { Loader, X } from "lucide-react";
+import { useSpring, animated, config } from "@react-spring/web";
+import FormField from "./FormField";
+import ImagePreview from "./ImagePreview";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 const AddProduct = ({ onClose, onProductAdded }) => {
+  const CloudinaryName = import.meta.env.VITE_CLOUDINARY_NAME;
+
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     price: "",
@@ -20,32 +24,34 @@ const AddProduct = ({ onClose, onProductAdded }) => {
     image: [],
   });
 
+  const files = formData.image.map((file) => URL.createObjectURL(file));
+
   // Animations
   const modalSpring = useSpring({
-    from: { opacity: 0, transform: 'scale(0.9)' },
-    to: { opacity: 1, transform: 'scale(1)' },
-    config: config.gentle
+    from: { opacity: 0, transform: "scale(0.9)" },
+    to: { opacity: 1, transform: "scale(1)" },
+    config: config.gentle,
   });
 
   const formFieldsSpring = useSpring({
-    from: { opacity: 0, transform: 'translateY(20px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
+    from: { opacity: 0, transform: "translateY(20px)" },
+    to: { opacity: 1, transform: "translateY(0)" },
     delay: 200,
-    config: config.gentle
+    config: config.gentle,
   });
 
   const imageSpring = useSpring({
-    from: { opacity: 0, transform: 'translateY(20px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
+    from: { opacity: 0, transform: "translateY(20px)" },
+    to: { opacity: 1, transform: "translateY(0)" },
     delay: 400,
-    config: config.gentle
+    config: config.gentle,
   });
 
   const buttonSpring = useSpring({
-    from: { opacity: 0, transform: 'translateY(20px)' },
-    to: { opacity: 1, transform: 'translateY(0)' },
+    from: { opacity: 0, transform: "translateY(20px)" },
+    to: { opacity: 1, transform: "translateY(0)" },
     delay: 600,
-    config: config.gentle
+    config: config.gentle,
   });
 
   const handleInputChange = (e) => {
@@ -56,44 +62,67 @@ const AddProduct = ({ onClose, onProductAdded }) => {
   const handleRemoveImage = (index) => {
     setFormData((prev) => ({
       ...prev,
-      image: prev.image.filter((_, i) => i !== index)
+      image: prev.image.filter((_, i) => i !== index),
     }));
   };
 
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const imageUrls = files.map((file) => URL.createObjectURL(file));
+  const handleImageUpload = async (files) => {
+    const uploadImageUrls = [];
 
-    setFormData((prev) => ({
-      ...prev,
-      image: [...prev.image, ...imageUrls]
-    }));
+    for (const file of files) {
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "only_baby");
+      data.append("cloud_name", CloudinaryName);
+
+      try {
+        const respoonse = await axios.post(
+          `https://api.cloudinary.com/v1_1/${CloudinaryName}/image/upload`,
+          data
+        );
+        uploadImageUrls.push(respoonse.data.secure_url);
+      } catch (error) {
+        console.log("Error uploading image:", error);
+      }
+    }
+
+    return uploadImageUrls;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
     try {
+      const imageUrls = await handleImageUpload(formData.image);
+
       const response = await axios.post(
         "https://onlybaby-admin.onrender.com/api/products/add",
-        formData,
+        {
+          ...formData,
+          image: imageUrls,
+        },
         {
           headers: {
-            "Accept": "application/json",
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
       onProductAdded();
+      setLoading(false);
       onClose();
       toast.success("Product added successfully!");
     } catch (error) {
       console.error("Error uploading product:", error);
       toast.error("Error uploading product.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-      <animated.div 
+      <animated.div
         style={modalSpring}
         className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto m-4"
       >
@@ -184,23 +213,30 @@ const AddProduct = ({ onClose, onProductAdded }) => {
 
           {/* Image Upload Field */}
           <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700">Upload Images</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Upload Images
+            </label>
             <input
               type="file"
               accept="image/*"
               multiple
-              onChange={handleImageUpload}
+              onChange={(e) =>
+                setFormData({ ...formData, image: Array.from(e.target.files) })
+              }
               className="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
 
-          <ImagePreview 
-            images={formData.image}
+          <ImagePreview
+            images={files}
             onRemove={handleRemoveImage}
             imageSpring={imageSpring}
           />
 
-          <animated.div style={buttonSpring} className="flex justify-end space-x-4 mt-6">
+          <animated.div
+            style={buttonSpring}
+            className="flex justify-end space-x-4 mt-6"
+          >
             <button
               onClick={onClose}
               className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
@@ -209,9 +245,21 @@ const AddProduct = ({ onClose, onProductAdded }) => {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-colors"
+              disabled={loading}
+              className={`px-6 py-2 rounded-lg transition-colors ${
+                loading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white"
+              }`}
             >
-              Save Product
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <Loader className="w-4 h-4 animate-spin " />
+                  Saving...
+                </div>
+              ) : (
+                "Save Product"
+              )}
             </button>
           </animated.div>
         </div>
