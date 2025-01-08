@@ -29,20 +29,32 @@ export const addProduct = async (req, res) => {
     // Validate required fields
     if (
       !name ||
-      !price ||
-      !ageGroup ||
+      price == null || // Ensure price is provided and not null
+      ageGroup == null || // Ensure ageGroup is provided and not null
       !color ||
       !description ||
       !itemsIncluded ||
       !features ||
       !benefits ||
-      !quantity ||
+      quantity == null || // Ensure quantity is provided and not null
       !image ||
       image.length === 0
     ) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields or images",
+      });
+    }
+
+    // Ensure price, ageGroup, and quantity are numbers
+    const numericPrice = Number(price);
+    const numericAgeGroup = Number(ageGroup);
+    const numericQuantity = Number(quantity);
+
+    if (isNaN(numericPrice) || isNaN(numericAgeGroup) || isNaN(numericQuantity)) {
+      return res.status(400).json({
+        success: false,
+        message: "Price, ageGroup, and quantity must be valid numbers",
       });
     }
 
@@ -54,14 +66,14 @@ export const addProduct = async (req, res) => {
     // Create the product object
     const product = {
       name,
-      price,
-      ageGroup,
+      price: numericPrice,
+      ageGroup: numericAgeGroup,
       color,
       description,
       itemsIncluded,
       features,
       benefits,
-      quantity,
+      quantity: numericQuantity,
       image, // Store the array of image URLs directly
     };
 
@@ -82,6 +94,7 @@ export const addProduct = async (req, res) => {
     await client.close();
   }
 };
+
 
 export const getProducts = async (req, res) => {
   let client;
