@@ -14,10 +14,8 @@ const app = express();
 const __dirname = path.resolve();
 
 app.use(express.json());
-app.use(cors({
-    origin:"https://onlybaby-admin.onrender.com",
-    credentials:true
-}));
+app.use(cors());
+
 
 app.use("/api/products",productRouter);
 app.use("/api/auth/",authRoutes);

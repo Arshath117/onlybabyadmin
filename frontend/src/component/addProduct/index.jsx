@@ -95,6 +95,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
 
     try {
       const imageUrls = await handleImageUpload(formData.image);
+      console.log(imageUrls)
 
       const response = await axios.post(
         "https://onlybaby-admin.onrender.com/api/products/add",
