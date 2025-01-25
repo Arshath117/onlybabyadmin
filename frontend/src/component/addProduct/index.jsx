@@ -7,7 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const AddProduct = ({ onClose, onProductAdded }) => {
-  const CloudinaryName = import.meta.env.VITE_CLOUDINARY_NAME;
+  // const CloudinaryName = import.meta.env.VITE_CLOUDINARY_NAME;
 
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +77,8 @@ const AddProduct = ({ onClose, onProductAdded }) => {
 
       try {
         const respoonse = await axios.post(
-          `https://api.cloudinary.com/v1_1/${CloudinaryName}/image/upload`,
+          // `https://api.cloudinary.com/v1_1/${CloudinaryName}/image/upload`,
+          `https://api.cloudinary.com/v1_1/dhkquaazr/image/upload`,
           data
         );
         uploadImageUrls.push(respoonse.data.secure_url);
