@@ -16,8 +16,6 @@ const OTP_EXPIRATION_TIME = 1 * 60 * 1000; // 1 minute
 export const login = async (req, res) => {
   const { email: enteredEmail, password: enteredPassword } = req.body;
 
-  // Check if the user exists
-  console.log("email verify",email)  
 
   // Validate credentials against environment variables
   if (enteredEmail !== email || enteredPassword !== password) {

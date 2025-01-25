@@ -12,8 +12,6 @@ function OTPVerification() {
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30); // Timer for resend OTP
 
-  console.log(" email otp check", email);
-
   // Handle countdown timer for Resend OTP
   useEffect(() => {
     if (resendTimer > 0) {

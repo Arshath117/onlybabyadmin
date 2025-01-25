@@ -43,8 +43,6 @@ export const updateOrderDeliveryStatus = async (req, res) => {
       }
     );
 
-    // Log the result to debug
-    console.log(result);
 
     // Check if the order was found and updated
     if (result.matchedCount === 0) {
@@ -59,11 +57,6 @@ export const updateOrderDeliveryStatus = async (req, res) => {
     if (isDelivered && userOrder?.orders?.length > 0) {
       const matchedOrder = userOrder.orders[0]; // Access the matched order
       const { shippingAddress, orderItems, totalPrice } = matchedOrder;
-
-      // Log the extracted fields
-      console.log("Shipping Address:", shippingAddress);
-      console.log("Order Items:", orderItems);
-      console.log("Total Price:", totalPrice);
 
       // Construct the phone number in E.164 format
       const recipientPhone = `+91${shippingAddress.phone}`; // Add +91 for Indian numbers

@@ -16,7 +16,6 @@ const Order = () => {
                 if (Array.isArray(response.data)) {
                     const allOrders = response.data.flatMap(item => item.orders || []);
                     setOrders(allOrders);
-                    console.log(allOrders);
                 } else {
                     throw new Error("Invalid data format");
                 }
@@ -48,8 +47,6 @@ const Order = () => {
                 orderId,
                 isDelivered,
             });
-
-            console.log("Order updated:", response.data);
 
             toast.success('Order status updated to Dispatched!', {
                 duration: 5000,

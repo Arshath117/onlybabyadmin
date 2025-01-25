@@ -9,7 +9,6 @@ const dbName = process.env.DB_NAME;
 
 //try
 export const addProduct = async (req, res) => {
-  console.log("Request data:", req.body);
 
   const client = new MongoClient(mongoUri);
   try {
@@ -80,7 +79,6 @@ export const addProduct = async (req, res) => {
     // Insert the product into the database
     const result = await productsCollection.insertOne(product);
 
-    console.log("Product added:", product);
 
     res.status(201).json({
       success: true,
@@ -116,7 +114,6 @@ export const getProducts = async (req, res) => {
 };
 
 export const removeProduct = async (req, res) => {
-  console.log("text from removeProduct controller");
   let client;
   try {
     client = new MongoClient(mongoUri);
@@ -124,7 +121,6 @@ export const removeProduct = async (req, res) => {
     const db = client.db(dbName);
     const productsCollection = db.collection(process.env.COLLECTION);
     const productId = req.query.productId;
-    console.log(productId);
     await productsCollection.deleteOne({ _id: new ObjectId(productId) });
     res
       .status(200)
