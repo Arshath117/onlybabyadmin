@@ -73,7 +73,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
       const data = new FormData();
       data.append("file", file);
       data.append("upload_preset", "only_baby");
-      data.append("cloud_name", dhkquaazr);
+      data.append("cloud_name", "dhkquaazr");
 
       try {
         const respoonse = await axios.post(
