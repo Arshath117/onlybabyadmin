@@ -26,7 +26,7 @@ const ProductCard = ({ product }) => {
 
         <div className="mt-4 space-y-2">
           <h3 className="text-lg font-semibold tracking-wide text-gray-800 transition-colors duration-300 group-hover:text-blue-600">
-            {product.name}
+            {product.name.length > 60 ? `${product.name.substring(0, 20)}...` : product.name}
           </h3>
           
           <div className="flex items-center justify-between text-sm">
