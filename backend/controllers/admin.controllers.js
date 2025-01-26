@@ -25,6 +25,8 @@ export const addProduct = async (req, res) => {
       image, // Array of image URLs sent from the frontend
     } = req.body;
 
+    console.log(req.body);
+
     // Validate required fields
     if (
       !name ||
@@ -47,7 +49,7 @@ export const addProduct = async (req, res) => {
 
     // Ensure price, ageGroup, and quantity are numbers
     const numericPrice = Number(price);
-    // const numericAgeGroup = Number(ageGroup);
+    const numericAgeGroup = ageGroup;
     const numericQuantity = Number(quantity);
 
     if (isNaN(numericPrice) || isNaN(numericAgeGroup) || isNaN(numericQuantity)) {
@@ -66,7 +68,7 @@ export const addProduct = async (req, res) => {
     const product = {
       name,
       price: numericPrice,
-      ageGroup,
+      ageGroup:numericAgeGroup,
       color,
       description,
       itemsIncluded,
