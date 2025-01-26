@@ -9,6 +9,14 @@ import toast from "react-hot-toast";
 const AddProduct = ({ onClose, onProductAdded }) => {
   // const CloudinaryName = import.meta.env.VITE_CLOUDINARY_NAME;
 
+  const ageRanges = [
+    { label: "0-1 Years", value: "0-1" },
+    { label: "1-3 Years", value: "1-3" },
+    { label: "3-6 Years", value: "3-6" },
+    { label: "6-11 Years", value: "6-11" },
+    { label: "11-19 Years", value: "11-19" },
+  ];
+
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
