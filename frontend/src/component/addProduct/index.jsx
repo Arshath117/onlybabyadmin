@@ -159,8 +159,10 @@ const AddProduct = ({ onClose, onProductAdded }) => {
             <FormField
               label="Age Group"
               name="ageGroup"
+              type="select"
               value={formData.ageGroup}
               onChange={handleInputChange}
+              options={ageRanges}
               spring={formFieldsSpring}
             />
             <FormField
