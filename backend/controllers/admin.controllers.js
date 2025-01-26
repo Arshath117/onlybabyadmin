@@ -52,7 +52,7 @@ export const addProduct = async (req, res) => {
     const numericAgeGroup = ageGroup;
     const numericQuantity = Number(quantity);
 
-    if (isNaN(numericPrice) || isNaN(numericAgeGroup) || isNaN(numericQuantity)) {
+    if (isNaN(numericPrice) || isNaN(numericQuantity)) {
       return res.status(400).json({
         success: false,
         message: "Price, ageGroup, and quantity must be valid numbers",
