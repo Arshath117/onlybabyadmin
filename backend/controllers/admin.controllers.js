@@ -47,7 +47,7 @@ export const addProduct = async (req, res) => {
 
     // Ensure price, ageGroup, and quantity are numbers
     const numericPrice = Number(price);
-    const numericAgeGroup = Number(ageGroup);
+    // const numericAgeGroup = Number(ageGroup);
     const numericQuantity = Number(quantity);
 
     if (isNaN(numericPrice) || isNaN(numericAgeGroup) || isNaN(numericQuantity)) {
@@ -66,7 +66,7 @@ export const addProduct = async (req, res) => {
     const product = {
       name,
       price: numericPrice,
-      ageGroup: numericAgeGroup,
+      ageGroup,
       color,
       description,
       itemsIncluded,
