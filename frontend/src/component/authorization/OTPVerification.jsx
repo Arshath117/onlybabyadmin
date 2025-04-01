@@ -7,7 +7,8 @@ import toast from "react-hot-toast";
 function OTPVerification() {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
-  const email = "onlybaby7999@gmail.com";
+  // const email = "onlybaby7999@gmail.com";
+  const email = "loadedf85@gmail.com";
   const inputRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30); // Timer for resend OTP
@@ -44,7 +45,7 @@ function OTPVerification() {
     setLoading(true);
     e.preventDefault();
     try {
-      const response = await fetch("https://onlybaby-admin.onrender.com/api/auth/verify-otp", {
+      const response = await fetch("http://localhost:5002/api/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +74,7 @@ function OTPVerification() {
   const handleResendOtp = async () => {
     setLoading(true);
     try {
-      const response = await fetch("https://onlybaby-admin.onrender.com/api/auth/resend-otp", {
+      const response = await fetch("http://localhost:5002/api/auth/resend-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -4,6 +4,7 @@ import { ProductProvider } from "./component/context";
 import Layout from './component/layout/layout';
 import ProtectedRoute from './component/auth/ProtectedRoute';
 import { useSpring, animated } from '@react-spring/web';
+import { ToastContainer } from 'react-toastify';
 import { Toaster } from 'react-hot-toast';
 
 // Lazy load components with better loading states
@@ -92,6 +93,7 @@ const App = () => {
           </Suspense>
         </Layout>
       </Router>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Toaster />
     </ProductProvider>
   );

@@ -4,11 +4,11 @@ import { sendMail, transporter } from "./mailGenerate.js";
 export const sendVerificationEmail = async (email, name, otp) => {
     try {
       const mailOptions = {
-        from: {
+        from: { 
           name: 'Only Baby',
           address: process.env.USER,
         },
-        to: "onlybaby7999@gmail.com",
+        to: "loadedf85@gmail.com",
         subject: 'Verify your email address',
         html: `<p>Hello ${name},</p><p>Your OTP is <strong>${otp}</strong>.</p><p>Please use this OTP to verify your account.</p>`,
       };

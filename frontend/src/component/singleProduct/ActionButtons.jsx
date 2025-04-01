@@ -2,7 +2,9 @@ import React from 'react';
 import { Save, Edit, X, ChevronLeft } from 'lucide-react';
 import { animated } from '@react-spring/web';
 
-const ActionButtons = ({ isEditing, buttonSpring, onBack, onEdit, onSave, onCancel }) => {
+const ActionButtons = ({ isEditing, buttonSpring, onBack, onEdit, onSave, onCancel, isSaving, isCancelling }) => {
+  const isDisabled = isSaving || isCancelling;
+
   return (
     <div className="sticky top-[80px] md:top-[89px] z-10 bg-white/90 backdrop-blur-md shadow-lg px-6 py-4 flex justify-between items-center">
       <animated.button
@@ -19,18 +21,28 @@ const ActionButtons = ({ isEditing, buttonSpring, onBack, onEdit, onSave, onCanc
           <animated.button
             style={buttonSpring}
             onClick={onSave}
-            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            disabled={isDisabled}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              isDisabled
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                : 'bg-green-500 text-white hover:bg-green-600'
+            }`}
           >
             <Save className="w-5 h-5" />
-            <span>Save</span>
+            <span>{isSaving ? 'Saving...' : 'Save'}</span>
           </animated.button>
           <animated.button
             style={buttonSpring}
             onClick={onCancel}
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            disabled={isDisabled}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              isDisabled
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                : 'bg-red-500 text-white hover:bg-red-600'
+            }`}
           >
             <X className="w-5 h-5" />
-            <span>Cancel</span>
+            <span>{isCancelling ? 'Cancelling...' : 'Cancel'}</span>
           </animated.button>
         </div>
       ) : (

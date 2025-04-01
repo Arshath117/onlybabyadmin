@@ -14,6 +14,7 @@ const otpStore = new Map();
 const OTP_EXPIRATION_TIME = 1 * 60 * 1000; // 1 minute
 
 export const login = async (req, res) => {
+  console.log("login received")
   const { email: enteredEmail, password: enteredPassword } = req.body;
 
 
@@ -67,7 +68,7 @@ export const verifyOtp = async (req, res) => {
 
 export const resendOtp = async (req, res) => {
   const { email: enteredEmail } = req.body;
-
+ 
   if (enteredEmail !== email) {
     return res.status(400).json({ message: 'User not found' });
   }

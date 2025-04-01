@@ -16,7 +16,7 @@ const ProductCard = ({ product }) => {
         <Link to={`/products/${product._id}`} className="overflow-hidden rounded-lg">
           <div className="relative overflow-hidden rounded-lg">
             <img
-              src={product.image[0]}
+              src={product?.colors[0]?.images[0]}
               alt={product.name}
               className="object-cover object-center w-full rounded-lg h-48 sm:h-60 md:h-72 lg:h-80 transform transition-transform duration-300 group-hover:scale-110"
             />
