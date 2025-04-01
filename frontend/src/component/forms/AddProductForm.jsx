@@ -39,7 +39,7 @@ const AddProductForm = ({ onClose, onProductAdded }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5002/api/products/add",
+        "https://onlybabyadmin-1.onrender.com/api/products/add",
         formData
       );
       onProductAdded();

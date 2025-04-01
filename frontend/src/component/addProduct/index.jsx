@@ -153,7 +153,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
         colors: uploadedMedia,
       };
 
-      await axios.post("http://localhost:5002/api/products/add", productData, {
+      await axios.post("https://onlybabyadmin-1.onrender.com/api/products/add", productData, {
         headers: { "Content-Type": "application/json" },
       });
 

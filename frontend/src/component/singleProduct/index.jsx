@@ -167,7 +167,7 @@ const SingleProduct = () => {
       const { _id, ...productData } = finalProduct;
       console.log("Sending PUT request with:", { productId: id, updatedProduct: productData, deletedMedia });
 
-      const response = await fetch('http://localhost:5002/api/products/updateProduct', {
+      const response = await fetch('https://onlybabyadmin-1.onrender.com/api/products/updateProduct', {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

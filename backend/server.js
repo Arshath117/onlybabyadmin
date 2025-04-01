@@ -19,7 +19,7 @@ app.use(express.urlencoded({limit: "50mb", extended: true }));
 
 app.use(cors({
     origin: "*",
-    // origin: ["http://localhost:5173", "http://localhost:5002"],
+    // origin: ["http://localhost:5173", "https://onlybabyadmin-1.onrender.com"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, 
 }));
