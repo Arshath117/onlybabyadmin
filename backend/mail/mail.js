@@ -8,7 +8,7 @@ export const sendVerificationEmail = async (email, name, otp) => {
           name: 'Only Baby',
           address: process.env.USER,
         },
-        to: "loadedf85@gmail.com",
+        to: "onlybaby7999@gmail.com",
         subject: 'Verify your email address',
         html: `<p>Hello ${name},</p><p>Your OTP is <strong>${otp}</strong>.</p><p>Please use this OTP to verify your account.</p>`,
       };
