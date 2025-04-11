@@ -131,7 +131,6 @@ export const getProducts = async (req, res) => {
 };
 
 
-
 export const removeProduct = async (req, res) => {
   let client;
   try {
@@ -158,10 +157,10 @@ export const removeProduct = async (req, res) => {
 
     const deletePromises = [];
 
+    // Delete images and videos from product colors
     product.colors.forEach(colorVariant => {
-      // Delete images
       colorVariant.images.forEach(imageUrl => {
-        const publicId = imageUrl.split('/').pop().split('.')[0]; // Extract public ID from URL
+        const publicId = imageUrl.split('/').pop().split('.')[0];
         deletePromises.push(
           cloudinary.uploader.destroy(publicId, { resource_type: 'image' })
             .catch(err => console.error(`Failed to delete image ${publicId}:`, err))
@@ -177,10 +176,24 @@ export const removeProduct = async (req, res) => {
       }
     });
 
+    // Delete review images (since reviews are embedded in product)
+    if (Array.isArray(product.reviews)) {
+      product.reviews.forEach(review => {
+        if (Array.isArray(review.images)) {
+          review.images.forEach(imageUrl => {
+            const publicId = imageUrl.split('/').pop().split('.')[0];
+            deletePromises.push(
+              cloudinary.uploader.destroy(publicId, { resource_type: 'image' })
+                .catch(err => console.error(`Failed to delete review image ${publicId}:`, err))
+            );
+          });
+        }
+      });
+    }
+
     await Promise.all(deletePromises);
 
     const deleteResult = await productsCollection.deleteOne({ _id: new ObjectId(productId) });
-    
     if (deleteResult.deletedCount === 0) {
       return res.status(404).json({
         success: false,
@@ -190,7 +203,7 @@ export const removeProduct = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Product and associated media removed successfully",
+      message: "Product, reviews, and all associated media removed successfully",
     });
   } catch (error) {
     console.error("Error in removeProduct controller:", error.message);
@@ -204,7 +217,6 @@ export const removeProduct = async (req, res) => {
     }
   }
 };
-
 
 export const updateProduct = async (req, res) => {
   let client;
@@ -291,3 +303,77 @@ export const updateProduct = async (req, res) => {
     if (client) await client.close();
   }
 };
+
+// export const removeProduct = async (req, res) => {
+//   let client;
+//   try {
+//     client = new MongoClient(mongoUri);
+//     await client.connect();
+//     const db = client.db(dbName);
+//     const productsCollection = db.collection(process.env.COLLECTION);
+//     const productId = req.query.productId;
+
+//     if (!ObjectId.isValid(productId)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid product ID",
+//       });
+//     }
+
+//     const product = await productsCollection.findOne({ _id: new ObjectId(productId) });
+//     if (!product) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Product not found",
+//       });
+//     }
+
+//     const deletePromises = [];
+
+//     product.colors.forEach(colorVariant => {
+//       // Delete images
+//       colorVariant.images.forEach(imageUrl => {
+//         const publicId = imageUrl.split('/').pop().split('.')[0]; // Extract public ID from URL
+//         deletePromises.push(
+//           cloudinary.uploader.destroy(publicId, { resource_type: 'image' })
+//             .catch(err => console.error(`Failed to delete image ${publicId}:`, err))
+//         );
+//       });
+
+//       if (colorVariant.video) {
+//         const videoPublicId = colorVariant.video.split('/').pop().split('.')[0];
+//         deletePromises.push(
+//           cloudinary.uploader.destroy(videoPublicId, { resource_type: 'video' })
+//             .catch(err => console.error(`Failed to delete video ${videoPublicId}:`, err))
+//         );
+//       }
+//     });
+
+//     await Promise.all(deletePromises);
+
+//     const deleteResult = await productsCollection.deleteOne({ _id: new ObjectId(productId) });
+    
+//     if (deleteResult.deletedCount === 0) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Product not found during deletion",
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Product and associated media removed successfully",
+//     });
+//   } catch (error) {
+//     console.error("Error in removeProduct controller:", error.message);
+//     res.status(500).json({
+//       success: false,
+//       message: "Internal Server Error",
+//     });
+//   } finally {
+//     if (client) {
+//       await client.close();
+//     }
+//   }
+// };
+
