@@ -13,9 +13,9 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); // Set loading to true
-//http://admin.onlybaby.co.in:5002/api/auth/login
+//https://admin.onlybaby.co.in/api/auth/login
     try {
-      const response = await fetch("http://admin.onlybaby.co.in:5002/api/auth/login", {
+      const response = await fetch("https://admin.onlybaby.co.in/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -9,7 +9,7 @@ const ProductProvider = ({ children }) => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://admin.onlybaby.co.in:5002/api/products/get");
+      const response = await axios.get("https://admin.onlybaby.co.in/api/products/get");
 
       console.log(response.data.products);
       setProducts(response.data.products);
