@@ -40,7 +40,7 @@ const ProductCRUD = () => {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`https://onlybabyadmin-1.onrender.com/api/products/remove`, {
+      await axios.delete(`http://localhost:5002/api/products/remove`, {
         params: { productId: selectedProduct._id },
       });
       await fetchProducts();
@@ -62,7 +62,7 @@ const ProductCRUD = () => {
   const handleSaveEdit = async () => {
     try {
       setIsLoading(true);
-      await axios.put(`https://onlybabyadmin-1.onrender.com/api/products/update`, {
+      await axios.put(`http://localhost:5002/api/products/updateProduct`, {
         productId: editedProduct._id,
         updatedProduct: editedProduct,
       });

@@ -28,30 +28,30 @@ const AddProduct = ({ onClose, onProductAdded }) => {
     features: "",
     benefits: "",
     quantity: "",
-    discount: ""
+    discount: "",
   });
 
   // Animations
   const modalSpring = useSpring(
-    { 
-    from: { opacity: 0, transform: "scale(0.9)" }, 
-    to: { opacity: 1, transform: "scale(1)" }, 
-    config: config.gentle 
-  });
+    {
+      from: { opacity: 0, transform: "scale(0.9)" },
+      to: { opacity: 1, transform: "scale(1)" },
+      config: config.gentle
+    });
 
   const formFieldsSpring = useSpring(
-    { 
-    from: { opacity: 0, transform: "translateY(20px)" }, 
-    to: { opacity: 1, transform: "translateY(0)" }, 
-    delay: 200, 
-    config: config.gentle });
+    {
+      from: { opacity: 0, transform: "translateY(20px)" },
+      to: { opacity: 1, transform: "translateY(0)" },
+      delay: 200,
+      config: config.gentle });
 
   const buttonSpring = useSpring(
     {
-    from: { opacity: 0, transform: "translateY(20px)" }, 
-    to: { opacity: 1, transform: "translateY(0)" }, 
-    delay: 600, 
-    config: config.gentle });
+      from: { opacity: 0, transform: "translateY(20px)" },
+      to: { opacity: 1, transform: "translateY(0)" },
+      delay: 600,
+      config: config.gentle });
 
   const handleColorInput = (e) => {
     const count = parseInt(e.target.value, 10) || 0;
@@ -141,9 +141,39 @@ const AddProduct = ({ onClose, onProductAdded }) => {
     return uploadedMedia;
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!formData.name) {
+      toast.error("Product Name is required.");
+      return;
+    }
+    if (!formData.price) {
+      toast.error("Price is required.");
+      return;
+    }
+    if (!formData.ageGroup) {
+      toast.error("Age Group is required.");
+      return;
+    }
+    if (colors.length === 0) {
+      toast.error("At least one color is required (set Colors Count).");
+      return;
+    }
+    if (colors.some(colorItem => !colorItem.color)) {
+      toast.error("Please specify the color name for each color variant.");
+      return;
+    }
+
+    // New validation: Ensure at least one image per color variant
+    for (const colorItem of colors) {
+      if (!colorItem.images || colorItem.images.length === 0) {
+        toast.error(`Please add at least one image for the color variant: ${colorItem.color || 'Unnamed'}`);
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -153,7 +183,7 @@ const AddProduct = ({ onClose, onProductAdded }) => {
         colors: uploadedMedia,
       };
 
-      await axios.post("https://onlybabyadmin-1.onrender.com/api/products/add", productData, {
+      await axios.post("http://localhost:5002/api/products/add", productData, {
         headers: { "Content-Type": "application/json" },
       });
 
@@ -180,94 +210,93 @@ const AddProduct = ({ onClose, onProductAdded }) => {
 
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField 
-              label="Product Name" 
-              name="name" 
-              value={formData.name} 
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-              spring={formFieldsSpring} 
+            <FormField
+              label="Product Name"
+              name="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              spring={formFieldsSpring}
             />
-            <FormField 
-              label="Price" 
-              name="price" 
-              type="number" 
-              value={formData.price} 
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })} 
-              spring={formFieldsSpring} 
+            <FormField
+              label="Price"
+              name="price"
+              type="number"
+              value={formData.price}
+              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              spring={formFieldsSpring}
             />
-            <FormField 
-              label="Age Group" 
-              name="ageGroup" 
-              type="select" 
-              value={formData.ageGroup} 
-              onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })} 
-              options={ageRanges} 
-              spring={formFieldsSpring} 
+            <FormField
+              label="Age Group"
+              name="ageGroup"
+              type="select"
+              value={formData.ageGroup}
+              onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
+              options={ageRanges}
+              spring={formFieldsSpring}
             />
-            <FormField 
-              label="Quantity" 
-              name="quantity" 
-              type="number" 
-              value={formData.quantity} 
-              onChange={(e) => setFormData({ ...formData, quantity: e.target.value })} 
-              spring={formFieldsSpring} 
-            />
-            
-            <FormField 
-              label="Description" 
-              name="description" 
-              type="textarea"
-              value={formData.description} 
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })} 
-              spring={formFieldsSpring} 
-              className="md:col-span-2" 
-            />
-            <FormField 
-              label="Items Included" 
-              name="itemsIncluded" 
-              type="textarea"
-              value={formData.itemsIncluded} 
-              onChange={(e) => setFormData({ ...formData, itemsIncluded: e.target.value })} 
-              spring={formFieldsSpring} 
-              className="md:col-span-2"
-            />
-            <FormField 
-              label="Features" 
-              name="features" 
-              type="textarea"
-              value={formData.features} 
-              onChange={(e) => setFormData({ ...formData, features: e.target.value })} 
-              spring={formFieldsSpring} 
-              className="md:col-span-2"
-            />
-            <FormField 
-              label="Benefits" 
-              name="benefits" 
-              type="textarea"
-              value={formData.benefits} 
-              onChange={(e) => setFormData({ ...formData, benefits: e.target.value })} 
-              spring={formFieldsSpring} 
-              className="md:col-span-2"
-            />
-            <FormField 
-              label="Colors Count" 
-              name="count" 
-              type="number" 
-              onChange={handleColorInput} 
-              spring={formFieldsSpring} 
+            <FormField
+              label="Quantity"
+              name="quantity"
+              type="number"
+              value={formData.quantity}
+              onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+              spring={formFieldsSpring}
             />
 
-            <FormField 
-              label="Discount" 
-              name="discount" 
-              type="number" 
-              value={formData.discount} 
-              onChange={(e) => setFormData({ ...formData, discount: e.target.value })} 
-              spring={formFieldsSpring} 
+            <FormField
+              label="Description"
+              name="description"
+              type="textarea"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              spring={formFieldsSpring}
+              className="md:col-span-2"
+            />
+            <FormField
+              label="Items Included"
+              name="itemsIncluded"
+              type="textarea"
+              value={formData.itemsIncluded}
+              onChange={(e) => setFormData({ ...formData, itemsIncluded: e.target.value })}
+              spring={formFieldsSpring}
+              className="md:col-span-2"
+            />
+            <FormField
+              label="Features"
+              name="features"
+              type="textarea"
+              value={formData.features}
+              onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+              spring={formFieldsSpring}
+              className="md:col-span-2"
+            />
+            <FormField
+              label="Benefits"
+              name="benefits"
+              type="textarea"
+              value={formData.benefits}
+              onChange={(e) => setFormData({ ...formData, benefits: e.target.value })}
+              spring={formFieldsSpring}
+              className="md:col-span-2"
+            />
+            <FormField
+              label="Colors Count"
+              name="count"
+              type="number"
+              onChange={handleColorInput}
+              spring={formFieldsSpring}
+            />
+
+            <FormField
+              label="Discount"
+              name="discount"
+              type="number"
+              value={formData.discount}
+              onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+              spring={formFieldsSpring}
             />
           </div>
 
-          
 
           {colors.map((item, index) => (
             <div key={index} className="mt-4">
