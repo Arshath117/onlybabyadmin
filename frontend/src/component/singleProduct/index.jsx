@@ -138,6 +138,9 @@ const SingleProduct = () => {
   const handleSave = async () => {
     setIsSaving(true);
     console.log("Save button clicked");
+
+    
+
     try {
       const updatedColors = await Promise.all(editedProduct.colors.map(async (colorObj) => {
         const newImages = newMedia[colorObj.color]?.images || [];
@@ -167,7 +170,7 @@ const SingleProduct = () => {
       const { _id, ...productData } = finalProduct;
       console.log("Sending PUT request with:", { productId: id, updatedProduct: productData, deletedMedia });
 
-      const response = await fetch('https://onlybabyadmin-1.onrender.com/api/products/updateProduct', {
+      const response = await fetch('http://localhost:5002/api/products/updateProduct', {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

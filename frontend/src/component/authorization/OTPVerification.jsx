@@ -44,7 +44,7 @@ function OTPVerification() {
     setLoading(true);
     e.preventDefault();
     try {
-      const response = await fetch("https://onlybabyadmin-1.onrender.com/api/auth/verify-otp", {
+      const response = await fetch("http://localhost:5002/api/auth/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +73,7 @@ function OTPVerification() {
   const handleResendOtp = async () => {
     setLoading(true);
     try {
-      const response = await fetch("https://onlybabyadmin-1.onrender.com/api/auth/resend-otp", {
+      const response = await fetch("http://localhost:5002/api/auth/resend-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

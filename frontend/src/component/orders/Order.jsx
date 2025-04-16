@@ -12,7 +12,7 @@ const Order = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('https://onlybabyadmin-1.onrender.com/api/orders');
+                const response = await axios.get('http://localhost:5002/api/orders');
                 if (Array.isArray(response.data)) {
                     const allOrders = response.data.flatMap(item => item.orders || []);
                     setOrders(allOrders);
@@ -43,7 +43,7 @@ const Order = () => {
         }
 
         try {
-            const response = await axios.put("https://onlybabyadmin-1.onrender.com/api/orders/update", {
+            const response = await axios.put("http://localhost:5002/api/orders/update", {
                 orderId,
                 isDelivered,
             });
