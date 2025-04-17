@@ -19,7 +19,7 @@ app.use(express.urlencoded({limit: "50mb", extended: true }));
 
 app.use(cors({
    
-    origin: ["http://localhost:5174", "https://admin.onlybaby.co.in","http://admin.onlybaby.co.in"],
+    origin: ["https://admin.onlybaby.co.in","http://admin.onlybaby.co.in"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, 
 }));
