@@ -17,12 +17,14 @@ export const transporter = nodemailer.createTransport({
   });
 
 
-export const sendMail = async (transporter,mailOptions) => {
+  export const sendMail = async (transporter, mailOptions) => {
     try{
-        await transporter.sendMail(mailOptions);
-        console.log("Email has been sent");
-    }catch(error){
-        console.error(error.message);
+        console.log("Attempting to send email with options:", mailOptions); 
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Email has been sent successfully. Info:", info);
+        console.log("Email has been sent"); 
+    } catch(error){
+        console.error("Error sending email:", error);
     }
 }
 
