@@ -39,7 +39,7 @@ const AddProductForm = ({ onClose, onProductAdded }) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://admin.onlybaby.co.in/api/products/add",
+        `${import.meta.env.VITE_API}/api/products/add`,
         formData
       );
       onProductAdded();

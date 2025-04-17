@@ -15,7 +15,7 @@ const Login = () => {
     setLoading(true); // Set loading to true
 
     try {
-      const response = await fetch("https://admin.onlybaby.co.in/api/auth/login", {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

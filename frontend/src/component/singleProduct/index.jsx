@@ -170,7 +170,7 @@ const SingleProduct = () => {
       const { _id, ...productData } = finalProduct;
       console.log("Sending PUT request with:", { productId: id, updatedProduct: productData, deletedMedia });
 
-      const response = await fetch('https://admin.onlybaby.co.in/api/products/updateProduct', {
+      const response = await fetch(`${import.meta.env.VITE_API}/api/products/updateProduct`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
