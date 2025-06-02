@@ -13,17 +13,18 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
   const handleImageChange = (color, e) => {
     const files = Array.from(e.target.files);
     console.log(`Adding images for ${color}:`, files);
+    // Changed max image limit to 7
     const currentImages = editedProduct.colors.find(c => c.color === color)?.images.length || 0;
-    const remainingSlots = 5 - currentImages;
+    const remainingSlots = 7 - currentImages; // Updated from 5 to 7
 
     if (files.length <= remainingSlots) {
       setNewImageFiles(prev => ({ ...prev, [color]: files }));
       onAddImage(color, files);
       if (fileInputRefs.current[color]) {
-        fileInputRefs.current[color].value = '';
+        fileInputRefs.current[color].value = ''; // Clear the input field
       }
     } else {
-      toast.warning(`You can only add ${remainingSlots} more images for ${color}. Maximum limit is 5 images.`);
+      toast.warning(`You can only add ${remainingSlots} more images for ${color}. Maximum limit is 7 images.`); // Updated warning message
     }
   };
 
@@ -72,7 +73,7 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
       </div>
 
       <div className="space-y-6 divide-y divide-gray-200">
-      <div className="pt-6">
+        <div className="pt-6">
           <h3 className="text-lg font-semibold capitalize mb-2">Colors:</h3>
           {isEditing ? (
             <div className="space-y-4">
@@ -87,7 +88,8 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
                   <div className="mt-2 flex flex-wrap gap-2">
                     {c.images.map((img, index) => (
                       <div key={index} className="relative">
-                        <img src={img} alt={`${c.color} ${index}`} className="w-20 h-20 object-cover rounded" />
+                        {/* If img is a File object, create URL for preview, else use directly */}
+                        <img src={typeof img === 'string' ? img : URL.createObjectURL(img)} alt={`${c.color} ${index}`} className="w-20 h-20 object-cover rounded" />
                         <button
                           onClick={() => onRemoveImage(c.color, index)}
                           className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
@@ -98,9 +100,10 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
                     ))}
                     {c.video && (
                       <div className="relative">
-                        <video src={c.video} className="w-20 h-20 object-cover rounded" controls />
+                        {/* If c.video is a File object, create URL for preview, else use directly */}
+                        <video src={typeof c.video === 'string' ? c.video : URL.createObjectURL(c.video)} className="w-20 h-20 object-cover rounded" controls />
                         <button
-                          onClick={() => onRemoveImage(c.color, 'video')}
+                          onClick={() => onRemoveImage(c.color, 'video')} // Assuming 'video' is a special key for video removal
                           className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
                         >
                           <X className="w-4 h-4" />
@@ -110,30 +113,30 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
                   </div>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      {c.images.length} images (max 5, {5 - c.images.length} slots remaining)
+                      {c.images.length} images (max 7, {7 - c.images.length} slots remaining) {/* Updated max to 7 */}
                     </p>
                     <div className='flex flex-col gap-2'>
                       <div>
-                      <span className='mr-2 font-sans text-gray-500 font-semibold'>Image Input</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        ref={el => (fileInputRefs.current[c.color] = el)}
-                        onChange={(e) => handleImageChange(c.color, e)}
-                        disabled={c.images.length >= 5}
-                        className="mt-2"
-                      />
+                        <span className='mr-2 font-sans text-gray-500 font-semibold'>Image Input</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          ref={el => (fileInputRefs.current[c.color] = el)}
+                          onChange={(e) => handleImageChange(c.color, e)}
+                          disabled={c.images.length >= 7} // Disabled when 7 images are present
+                          className="mt-2"
+                        />
                       </div>
                       <div>
-                      <span className='mr-2 font-sans text-gray-500 font-semibold'>Video</span>
-                      <input
-                        type="file"
-                        accept="video/*"
-                        onChange={(e) => handleVideoChange(c.color, e)}
-                        disabled={!!c.video}
-                        className="mt-2"
-                      />
+                        <span className='mr-2 font-sans text-gray-500 font-semibold'>Video</span>
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => handleVideoChange(c.color, e)}
+                          disabled={!!c.video}
+                          className="mt-2"
+                        />
                       </div>
                     </div>
                   </div>
@@ -168,6 +171,7 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
                   className="flex items-center space-x-2 cursor-pointer"
                   onClick={() => onColorSelect(c.color)}
                 >
+                  {/* Note: This directly uses color name as background, which might not work for all names */}
                   <div
                     style={{ backgroundColor: c.color }}
                     className="h-6 w-6 rounded-full border border-gray-300"
@@ -192,7 +196,7 @@ const ProductDetails = ({ fadeIn, product, isEditing, editedProduct, onFieldChan
             />
           </div>
         ))}
-       
+
       </div>
     </animated.div>
   );

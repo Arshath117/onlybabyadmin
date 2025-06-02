@@ -1,26 +1,21 @@
+// ImagePreview.jsx
 import React from 'react';
-import { X } from 'lucide-react';
-import { animated } from '@react-spring/web';
+import { X } from 'lucide-react'; // Assuming you use lucide-react for the X icon
 
-const ImagePreview = ({ images, onRemove, imageSpring }) => {
+const ImagePreview = ({ imageUrl, onRemove }) => {
   return (
-    <animated.div style={imageSpring} className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-      {images.map((image, index) => (
-        <div key={index} className="relative group">
-          <img
-            src={image}
-            alt={`Preview ${index + 1}`}
-            className="w-full h-48 object-cover rounded-lg shadow-md transition-transform duration-300 group-hover:scale-[1.02]"
-          />
-          <button
-            onClick={() => onRemove(index)}
-            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-100 "
-          >
-            <X size={16} />
-          </button>
-        </div>
-      ))}
-    </animated.div>
+    <div className="relative w-32 h-32 rounded-lg overflow-hidden shadow-md group">
+      <img src={imageUrl} alt="Product" className="w-full h-full object-cover" />
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+          aria-label="Remove image"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
+    </div>
   );
 };
 
