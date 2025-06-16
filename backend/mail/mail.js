@@ -6,7 +6,7 @@ export const sendVerificationEmail = async (email, name, otp) => {
       const mailOptions = {
         from: { 
           name: 'Only Baby',
-          address: process.env.USER,
+          address: 'onlybaby7999@gmail.com',
         },
         to: email,
         subject: 'Verify your email address',
