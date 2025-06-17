@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Accessing user credentials from environment variables
-const email = process.env.ADMIN_EMAIL;
+const email = 'onlybaby7999@gmail.com';
 const name = process.env.ADMIN_USER;
 const password = process.env.ADMIN_PASSWORD;
 
